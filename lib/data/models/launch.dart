@@ -1,11 +1,14 @@
 class Launch {
   final String name;
-  final String dateTime;
+  final DateTime dateTime;
 
   Launch({required this.name, required this.dateTime});
 
   factory Launch.fromMap(Map<String, dynamic> map) {
-    return Launch(name: map['name'], dateTime: map['date_utc']);
+    return Launch(
+      name: map['name'],
+      dateTime: DateTime.parse(map['date_utc']),
+    );
   }
 
   Map<String, dynamic> toMap() {

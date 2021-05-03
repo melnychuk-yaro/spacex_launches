@@ -10,9 +10,9 @@ class LaunchesRepository {
     try {
       final response = await _dio.get('$baseUrl/launches/upcoming');
       if (response.statusCode != 200) throw Exception('${response.statusCode}');
-      return response.data
-          .map<Launch>((launchMap) => Launch.fromMap(launchMap))
-          .toList();
+      return response.data.map<Launch>((launchMap) {
+        return Launch.fromMap(launchMap);
+      }).toList();
     } catch (e) {
       print(e);
       throw Exception(e);
