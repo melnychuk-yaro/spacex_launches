@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spacex_launches/view/widgets/launch_list_item.dart';
 
 import 'data/repositories/launches_repository.dart';
 import 'logic/cubit/launches_cubit.dart';
@@ -13,9 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData.dark(),
       home: MyHomePage(),
     );
   }
@@ -39,7 +38,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('SpaceX Launches')),
       body: BlocBuilder<LaunchesCubit, LaunchesState>(
         bloc: _launchesCubit,
         builder: (_, state) {
@@ -47,11 +45,14 @@ class _MyHomePageState extends State<MyHomePage> {
             return state.launches.isEmpty
                 ? Center(child: Text('No Launches Planned'))
                 : ListView.builder(
+                    physics: BouncingScrollPhysics(),
                     itemCount: state.launches.length,
                     itemBuilder: (_, i) {
-                      return ListTile(
-                        title: Text(state.launches[i].name),
-                        subtitle: Text(state.launches[i].dateTime),
+                      return LaunchListItem(
+                        imageUrl:
+                            'https://live.staticflickr.com/65535/51136428899_7080627b7f_w.jpg',
+                        name: state.launches[i].name,
+                        date: state.launches[i].dateTime,
                       );
                     },
                   );
