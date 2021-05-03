@@ -28,6 +28,7 @@ class LaunchListItem extends StatelessWidget {
               _buildParallaxBackground(context),
               _buildGradient(),
               _buildTitleAndSubtitle(),
+              _buildNotifyButton(),
             ],
           ),
         ),
@@ -94,6 +95,27 @@ class LaunchListItem extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildNotifyButton() {
+  return Positioned(
+    top: 5,
+    right: 5,
+    child: ClipOval(
+      child: Material(
+        color: Colors.transparent,
+        child: CircleAvatar(
+          radius: 26,
+          backgroundColor: Color(0x77989898),
+          child: IconButton(
+            color: Colors.red,
+            icon: Icon(Icons.notifications_outlined),
+            onPressed: () {},
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 class ParallaxFlowDelegate extends FlowDelegate {
