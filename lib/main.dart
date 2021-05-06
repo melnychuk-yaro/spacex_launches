@@ -51,8 +51,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     itemCount: state.launches.length,
                     itemBuilder: (_, i) {
                       return LaunchListItem(
-                        imageUrl:
-                            'https://live.staticflickr.com/65535/51136428899_7080627b7f_w.jpg',
+                        image: i.isOdd
+                            ? 'assets/images/launch_1.jpg'
+                            : 'assets/images/launch_0.jpg',
                         name: state.launches[i].name,
                         date: _dateFormat
                             .format(state.launches[i].dateTime.toLocal()),

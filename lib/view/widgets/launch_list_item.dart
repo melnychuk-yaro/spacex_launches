@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import '../../constants.dart';
 
 class LaunchListItem extends StatelessWidget {
-  final String imageUrl;
   final String name;
   final String date;
+  final String image;
   final GlobalKey _backgroundImageKey = GlobalKey();
 
   LaunchListItem({
     Key? key,
-    required this.imageUrl,
     required this.name,
     required this.date,
+    required this.image,
   }) : super(key: key);
 
   @override
@@ -44,8 +44,8 @@ class LaunchListItem extends StatelessWidget {
         backgroundImageKey: _backgroundImageKey,
       ),
       children: [
-        Image.network(
-          imageUrl,
+        Image.asset(
+          image,
           key: _backgroundImageKey,
           fit: BoxFit.cover,
         ),
@@ -108,7 +108,7 @@ Widget _buildNotifyButton() {
           radius: 26,
           backgroundColor: Color(0x77989898),
           child: IconButton(
-            color: Colors.red,
+            color: Colors.white,
             icon: Icon(Icons.notifications_outlined),
             onPressed: () {},
           ),
