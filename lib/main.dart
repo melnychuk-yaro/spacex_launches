@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 import 'data/repositories/launches_repository.dart';
 import 'data/repositories/notifications_repository.dart';
@@ -32,7 +31,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final LaunchesRepository _launchesRepo = LaunchesRepository();
   late final LaunchesCubit _launchesCubit = LaunchesCubit(_launchesRepo);
-  final DateFormat _dateFormat = DateFormat('MMMM d hh:mm a');
 
   @override
   void initState() {
@@ -57,9 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         image: i.isOdd
                             ? 'assets/images/launch_1.jpg'
                             : 'assets/images/launch_0.jpg',
-                        name: state.launches[i].name,
-                        date: _dateFormat
-                            .format(state.launches[i].dateTime.toLocal()),
+                        launch: state.launches[i],
                       );
                     },
                   );
