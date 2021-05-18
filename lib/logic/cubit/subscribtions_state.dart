@@ -4,7 +4,7 @@ enum SubscribtionsStatus { initial, loading, loaded, error }
 
 @immutable
 class SubscribtionsState extends Equatable {
-  final List<String> subscribtions;
+  final Set<String> subscribtions;
   final SubscribtionsStatus status;
 
   SubscribtionsState(this.subscribtions, this.status);
