@@ -17,6 +17,7 @@ dependencies:
   equatable: ^2.0.0
   flutter_bloc: ^7.0.0
   flutter_local_notifications: ^5.0.0+3
+  flutter_native_timezone: ^1.0.10
   intl: ^0.17.0
 
 dev_dependencies:
