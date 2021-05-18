@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';
-import '../../data/repositories/notifications_repository.dart';
+import '../../data/models/launch.dart';
+import '../../logic/services/parallax_flow_delegate.dart';
+import 'notify_button.dart';
 
 class LaunchListItem extends StatelessWidget {
-  final String name;
-  final String date;
+  final Launch launch;
   final String image;
   final GlobalKey _backgroundImageKey = GlobalKey();
 
   LaunchListItem({
     Key? key,
-    required this.name,
-    required this.date,
+    required this.launch,
     required this.image,
   }) : super(key: key);
 
@@ -29,7 +29,7 @@ class LaunchListItem extends StatelessWidget {
               _buildParallaxBackground(context),
               _buildGradient(),
               _buildTitleAndSubtitle(),
-              _buildNotifyButton(),
+              Positioned(top: 5, right: 5, child: NotifyButton(launch: launch)),
             ],
           ),
         ),
@@ -45,11 +45,7 @@ class LaunchListItem extends StatelessWidget {
         backgroundImageKey: _backgroundImageKey,
       ),
       children: [
-        Image.asset(
-          image,
-          key: _backgroundImageKey,
-          fit: BoxFit.cover,
-        ),
+        Image.asset(image, key: _backgroundImageKey, fit: BoxFit.cover),
       ],
     );
   }
@@ -78,7 +74,7 @@ class LaunchListItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            name,
+            launch.name,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
@@ -86,101 +82,11 @@ class LaunchListItem extends StatelessWidget {
             ),
           ),
           Text(
-            date,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-            ),
+            launch.formattedLocalDate,
+            style: const TextStyle(color: Colors.white, fontSize: 14),
           ),
         ],
       ),
     );
-  }
-}
-
-Widget _buildNotifyButton() {
-  return Positioned(
-    top: 5,
-    right: 5,
-    child: ClipOval(
-      child: Material(
-        color: Colors.transparent,
-        child: CircleAvatar(
-          radius: 26,
-          backgroundColor: Color(0x77989898),
-          child: IconButton(
-            color: Colors.white,
-            icon: Icon(Icons.notifications_outlined),
-            onPressed: () => NotificationsRepository().showNotification(
-              title: 'title',
-              body: 'body',
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
-class ParallaxFlowDelegate extends FlowDelegate {
-  ParallaxFlowDelegate({
-    required this.scrollable,
-    required this.listItemContext,
-    required this.backgroundImageKey,
-  }) : super(repaint: scrollable.position);
-
-  final ScrollableState scrollable;
-  final BuildContext listItemContext;
-  final GlobalKey backgroundImageKey;
-
-  @override
-  BoxConstraints getConstraintsForChild(int i, BoxConstraints constraints) {
-    return BoxConstraints.tightFor(
-      width: constraints.maxWidth,
-    );
-  }
-
-  @override
-  void paintChildren(FlowPaintingContext context) {
-    // Calculate the position of this list item within the viewport.
-    final scrollableBox = scrollable.context.findRenderObject() as RenderBox;
-    final listItemBox = listItemContext.findRenderObject() as RenderBox;
-    final listItemOffset = listItemBox.localToGlobal(
-        listItemBox.size.centerLeft(Offset.zero),
-        ancestor: scrollableBox);
-
-    // Determine the percent position of this list item within the
-    // scrollable area.
-    final viewportDimension = scrollable.position.viewportDimension;
-    final scrollFraction =
-        (listItemOffset.dy / viewportDimension).clamp(0.0, 1.0);
-
-    // Calculate the vertical alignment of the background
-    // based on the scroll percentage.
-    final verticalAlignment = Alignment(0.0, scrollFraction * 2 - 1);
-
-    // Convert the background alignment into a pixel offset for
-    // painting purposes.
-    final backgroundSize =
-        (backgroundImageKey.currentContext!.findRenderObject() as RenderBox)
-            .size;
-    final listItemSize = context.size;
-    final childRect =
-        verticalAlignment.inscribe(backgroundSize, Offset.zero & listItemSize);
-
-    // Paint the background.
-    context.paintChild(
-      0,
-      transform: Transform.translate(
-        offset: Offset(0.0, childRect.top),
-      ).transform,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant ParallaxFlowDelegate oldDelegate) {
-    return scrollable != oldDelegate.scrollable ||
-        listItemContext != oldDelegate.listItemContext ||
-        backgroundImageKey != oldDelegate.backgroundImageKey;
   }
 }
