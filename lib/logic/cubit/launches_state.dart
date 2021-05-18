@@ -21,3 +21,12 @@ class LaunchesLoaded extends LaunchesState {
   @override
   List<Object> get props => [launches];
 }
+
+class LaunchesError extends LaunchesState {
+  final String error;
+
+  LaunchesError(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
