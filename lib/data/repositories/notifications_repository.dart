@@ -1,8 +1,10 @@
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationsRepository {
+  late final String currentTimeZone;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   final InitializationSettings initializationSettings = InitializationSettings(
@@ -15,9 +17,7 @@ class NotificationsRepository {
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onSelectNotification: (payload) async {
-        if (payload != null) {
-          print('notification payload: $payload');
-        }
+        if (payload != null) print('notification payload: $payload');
       },
     );
     tz.initializeTimeZones();
@@ -36,19 +36,31 @@ class NotificationsRepository {
   static const NotificationDetails platformChannelSpecifics =
       NotificationDetails(android: androidPlatformChannelSpecifics);
 
-  Future<void> showNotification({
+  Future<void> scheduleNotification({
     required String title,
     required String body,
+    required DateTime launchTimeUTC,
   }) async {
+    final notificationTime = await _getNotiticationTime(launchTimeUTC);
+    print(notificationTime);
+    print(notificationTime.runtimeType);
     await flutterLocalNotificationsPlugin.zonedSchedule(
       0,
       title,
       body,
-      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+      notificationTime,
       platformChannelSpecifics,
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
     );
+  }
+
+  Future<tz.TZDateTime> _getNotiticationTime(DateTime launchTimeUtc) async {
+    final time = launchTimeUtc.subtract(const Duration(minutes: 5));
+    currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
+    print(time);
+    final currentLocation = tz.getLocation(currentTimeZone);
+    return tz.TZDateTime.from(time, currentLocation);
   }
 }
