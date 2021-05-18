@@ -3,10 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import 'data/repositories/launches_repository.dart';
+import 'data/repositories/notifications_repository.dart';
 import 'logic/cubit/launches_cubit.dart';
 import 'view/widgets/launch_list_item.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationsRepository().init();
   runApp(MyApp());
 }
 

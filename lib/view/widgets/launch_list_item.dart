@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';
+import '../../data/repositories/notifications_repository.dart';
 
 class LaunchListItem extends StatelessWidget {
   final String name;
@@ -110,7 +111,10 @@ Widget _buildNotifyButton() {
           child: IconButton(
             color: Colors.white,
             icon: Icon(Icons.notifications_outlined),
-            onPressed: () {},
+            onPressed: () => NotificationsRepository().showNotification(
+              title: 'title',
+              body: 'body',
+            ),
           ),
         ),
       ),
