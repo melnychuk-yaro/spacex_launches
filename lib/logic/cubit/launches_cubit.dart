@@ -10,7 +10,9 @@ part 'launches_state.dart';
 
 class LaunchesCubit extends Cubit<LaunchesState> {
   final LaunchesRepository launchesRepo;
-  LaunchesCubit(this.launchesRepo) : super(LaunchesInitial());
+  LaunchesCubit(this.launchesRepo) : super(LaunchesInitial()) {
+    loadLaunches();
+  }
 
   void loadLaunches() async {
     try {
