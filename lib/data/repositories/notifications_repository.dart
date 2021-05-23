@@ -1,10 +1,11 @@
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import '../../logic/services/failure.dart';
 
 class NotificationsRepository {
-  late final String currentTimeZone;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   final InitializationSettings initializationSettings = InitializationSettings(
@@ -12,6 +13,7 @@ class NotificationsRepository {
     iOS: const IOSInitializationSettings(),
     macOS: const MacOSInitializationSettings(),
   );
+  static const Duration notificationDelay = Duration(minutes: 5);
 
   Future<void> init() async {
     await flutterLocalNotificationsPlugin.initialize(
@@ -37,15 +39,14 @@ class NotificationsRepository {
       NotificationDetails(android: androidPlatformChannelSpecifics);
 
   Future<void> scheduleNotification({
+    required String id,
     required String title,
     required String body,
     required DateTime launchTimeUTC,
   }) async {
     final notificationTime = await _getNotiticationTime(launchTimeUTC);
-    print(notificationTime);
-    print(notificationTime.runtimeType);
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
+      _generateIntId(id),
       title,
       body,
       notificationTime,
@@ -53,14 +54,33 @@ class NotificationsRepository {
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
+      payload: id,
     );
   }
 
+  Future<void> cancelNotification(String id) async {
+    await flutterLocalNotificationsPlugin.cancel(
+      _generateIntId(id),
+    );
+  }
+
+  Future<Set<String>> getPendingNotifications() async {
+    final notifications =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    return notifications.map((item) => item.payload ?? '').toSet();
+  }
+
   Future<tz.TZDateTime> _getNotiticationTime(DateTime launchTimeUtc) async {
-    final time = launchTimeUtc.subtract(const Duration(minutes: 5));
-    currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
-    print(time);
+    final time = launchTimeUtc.subtract(notificationDelay);
+    if (DateTime.now().isAfter(time)) {
+      throw Failure('The lauhch is live');
+    }
+    final currentTimeZone = await FlutterNativeTimezone.getLocalTimezone();
     final currentLocation = tz.getLocation(currentTimeZone);
     return tz.TZDateTime.from(time, currentLocation);
+  }
+
+  int _generateIntId(String id) {
+    return id.codeUnits.reduce((value, element) => value + element);
   }
 }
