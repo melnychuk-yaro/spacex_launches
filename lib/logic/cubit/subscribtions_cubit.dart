@@ -11,23 +11,46 @@ class SubscribtionsCubit extends Cubit<SubscribtionsState> {
   final NotificationsRepository notificationsRepository;
 
   SubscribtionsCubit(this.notificationsRepository)
-      : super(SubscribtionsState(<String>{}, SubscribtionsStatus.initial));
+      : super(SubscribtionsState(<String>{}, SubscribtionsStatus.initial)) {
+    loadExistingSubscribtions();
+  }
 
-  void toggleSubscription(Launch launch) async {
+  Future<void> loadExistingSubscribtions() async {
+    emit(SubscribtionsState(
+      state.subscribtions,
+      SubscribtionsStatus.loading,
+    ));
+    final pendingNotificationRequests =
+        await notificationsRepository.getPendingNotifications();
+    emit(SubscribtionsState(
+      pendingNotificationRequests,
+      SubscribtionsStatus.loaded,
+    ));
+  }
+
+  Future<void> toggleSubscribtion(Launch launch) async {
     try {
-      emit(
-          SubscribtionsState(state.subscribtions, SubscribtionsStatus.loading));
-      notificationsRepository.scheduleNotification(
+      emit(SubscribtionsState(
+        state.subscribtions,
+        SubscribtionsStatus.loading,
+      ));
+      final updatedSubs = Set<String>.from(state.subscribtions);
+      if (updatedSubs.contains(launch.id)) {
+        updatedSubs.remove(launch.id);
+        notificationsRepository.cancelNotification(launch.id);
+      } else {
+        notificationsRepository.scheduleNotification(
+          id: launch.id,
           title: launch.name,
           body: 'SpaceX will launch their rocket soon.',
-          launchTimeUTC: launch.launchTimeUTC);
-      final updatedSubs = Set<String>.from(state.subscribtions);
-      updatedSubs.contains(launch.id)
-          ? updatedSubs.remove(launch.id)
-          : updatedSubs.add(launch.id);
+          launchTimeUTC: launch.launchTimeUTC,
+        );
+        updatedSubs.add(launch.id);
+      }
+      notificationsRepository.getPendingNotifications();
       emit(SubscribtionsState(updatedSubs, SubscribtionsStatus.loaded));
     } on Failure {
-      rethrow;
+      emit(SubscribtionsState(state.subscribtions, SubscribtionsStatus.error));
     }
   }
 }
