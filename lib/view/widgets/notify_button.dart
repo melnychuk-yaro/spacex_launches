@@ -15,7 +15,6 @@ class NotifyButton extends StatelessWidget {
         color: Colors.transparent,
         child: BlocBuilder<SubscribtionsCubit, SubscribtionsState>(
           builder: (context, state) {
-            print(state.subscribtions);
             return CircleAvatar(
               radius: 26,
               backgroundColor: Color(0x77989898),
