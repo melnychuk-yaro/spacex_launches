@@ -6,4 +6,4 @@ Do not miss SpaceX launches 🚀🚀🚀.
 
 Thanks, https://github.com/r-spacex/SpaceX-API for the awesome API.
 
-![screen_1](https://user-images.githubusercontent.com/74709638/118793600-70675e00-b8a1-11eb-87ce-22df63c609b7.png)
+![Screen](https://user-images.githubusercontent.com/74709638/119320446-412b6500-bc84-11eb-93b3-db12c587331b.gif)
