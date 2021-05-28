@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.spacex_launches">
    <application
-        android:label="spacex_launches"
+        android:label="SpaceX Launches"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
